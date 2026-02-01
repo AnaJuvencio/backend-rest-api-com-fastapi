@@ -9,12 +9,16 @@
 - ✅ Rotas de autenticação (`/auth`)
 - ✅ Rotas de pedidos (`/pedidos`)
 - ✅ Organização modular do código
+- ✅ Modelos de banco de dados com SQLAlchemy
+- ✅ Migrações com Alembic
 
 ## Tecnologias
 
 - Python
 - FastAPI
 - Uvicorn
+- SQLAlchemy
+- Alembic
 
 ## Como rodar
 
@@ -48,12 +52,49 @@
    uvicorn main:app --reload
    ```
 
-5. **Acessar a documentação:**
+5. **Aplicar migrações do banco de dados:**
+   ```bash
+   alembic upgrade head
+   ```
+
+6. **Acessar a documentação:**
    - Abra: `http://127.0.0.1:8000/docs`
    - Rotas disponíveis:
      - `/docs` - Documentação interativa
      - `/pedidos` - Rota de pedidos
      - `/auth` - Rota de autenticação
+
+## Comandos do Alembic (Migrações de Banco de Dados)
+
+### Criar uma nova migração
+Gera automaticamente um arquivo de migração baseado nas mudanças dos modelos:
+```bash
+alembic revision --autogenerate -m "Descrição da migração"
+```
+
+### Aplicar migrações
+Aplica todas as migrações pendentes ao banco de dados:
+```bash
+alembic upgrade head
+```
+
+### Reverter última migração
+Desfaz a última migração aplicada:
+```bash
+alembic downgrade -1
+```
+
+### Ver histórico de migrações
+Lista todas as migrações e seus status:
+```bash
+alembic history
+```
+
+### Ver migração atual
+Mostra qual migração está atualmente aplicada:
+```bash
+alembic current
+```
 
 ## Problemas comuns
 
