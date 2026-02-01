@@ -24,21 +24,59 @@
    ```
 
 2. **Ativar ambiente virtual:**
-   - Windows: `.venv\Scripts\activate`
+   - Windows PowerShell: `.venv\Scripts\Activate.ps1`
+   - Windows CMD: `.venv\Scripts\activate`
    - Linux/Mac: `source .venv/bin/activate`
 
 3. **Instalar dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   
+   Ou instalar manualmente:
    ```bash
    pip install fastapi uvicorn
    ```
 
 4. **Executar o servidor:**
    ```bash
+   python -m uvicorn main:app --reload
+   ```
+   
+   Ou (se o ambiente estiver ativado):
+   ```bash
    uvicorn main:app --reload
    ```
 
 5. **Acessar a documentação:**
-   - Abra: `http://localhost:8000/docs`
+   - Abra: `http://127.0.0.1:8000/docs`
+   - Rotas disponíveis:
+     - `/docs` - Documentação interativa
+     - `/pedidos` - Rota de pedidos
+     - `/auth` - Rota de autenticação
+
+## Problemas comuns
+
+### Erro ao renomear pasta do projeto
+Se você renomear a pasta do projeto, o ambiente virtual `.venv` ficará quebrado porque contém caminhos absolutos. 
+
+**Solução:**
+```bash
+# 1. Salvar pacotes instalados
+python -m pip freeze > requirements.txt
+
+# 2. Deletar ambiente virtual antigo
+Remove-Item -Recurse -Force .venv
+
+# 3. Criar novo ambiente virtual
+python -m venv .venv
+
+# 4. Ativar o novo ambiente
+.venv\Scripts\Activate.ps1
+
+# 5. Reinstalar pacotes
+pip install -r requirements.txt
+```
 
 ## Conceitos aprendidos
 

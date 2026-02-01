@@ -1,6 +1,6 @@
 # criar venv: python -m venv .venv
 # ativar venv: .venv\Scripts\activate (windows) | source .venv/bin/activate (linux)
-# uvicorn mais:app --reload
+# uvicorn main:app --reload
 # Vamos construir uma REST API
 # endpoint: /docs, é o link do app
 """
