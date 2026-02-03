@@ -134,3 +134,28 @@ pip install -r requirements.txt
 ├── auth_routes.py    # Rotas de autenticação
 └── order_routes.py   # Rotas de pedidos
 ```
+
+**Utilizando o Insomnia**
+
+- **Endpoint:** `POST http://127.0.0.1:8000/auth/criar_conta`
+- **Observação:** a rota atual espera os parâmetros via *query string* (não JSON no corpo).
+- **Passos no Insomnia:**
+   - Crie uma nova request do tipo `POST`.
+   - Informe a URL acima.
+   - Abra a aba **Query** (Query Params) e adicione os pares:
+      - `email` = exemplo@ex.com
+      - `senha` = senha123
+      - `nome` = Ana
+   - Clique em **Send**.
+
+- **Exemplo de URL com query string:**
+
+   `http://127.0.0.1:8000/auth/criar_conta?email=exemplo@ex.com&senha=senha123&nome=Ana`
+
+- **cURL equivalente:**
+
+```bash
+curl -X POST "http://127.0.0.1:8000/auth/criar_conta?email=exemplo@ex.com&senha=senha123&nome=Ana"
+```
+
+Essa instrução assume que o servidor está rodando em `http://127.0.0.1:8000`.
