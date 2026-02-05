@@ -182,11 +182,11 @@ async def criar_conta(usuario: UsuarioSchema):
 
 **Exemplo 1: Usuário cadastrado com sucesso (200 OK)**
 
-![Usuário cadastrado com sucesso](./imgs_readme/usuario-sucesso.png)
+![Usuário cadastrado com sucesso](./imgs_readme/insomnia_sucess.png)
 
 **Exemplo 2: Email já cadastrado (400 Bad Request)**
 
-![Email já cadastrado - Erro 400](./imgs_readme/usuario-erro-400.png)
+![Email já cadastrado - Erro 400](./imgs_readme/insominia_usuariojacadastrado.png)
 
 - **cURL equivalente:**
 ```bash
