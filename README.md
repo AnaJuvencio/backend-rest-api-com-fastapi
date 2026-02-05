@@ -5,12 +5,14 @@
 ## O que foi feito até agora
 
 - ✅ Configuração básica do FastAPI
-- ✅ Estrutura de rotas com `APIRouter`
-- ✅ Rotas de autenticação (`/auth`)
-- ✅ Rotas de pedidos (`/pedidos`)
-- ✅ Organização modular do código
-- ✅ Modelos de banco de dados com SQLAlchemy
+- ✅ Estrutura de rotas com `APIRouter` (autenticação e pedidos)
+- ✅ Modelos de banco de dados com SQLAlchemy (Usuario, Pedido, ItemPedido)
 - ✅ Migrações com Alembic
+- ✅ Schemas com Pydantic BaseModel para validação de dados
+- ✅ Sistema de criação de contas (validação de email duplicado e criptografia bcrypt)
+- ✅ Integração com banco de dados SQLite
+- ✅ Sistema de sessões com SQLAlchemy
+- ✅ Tratamento de erros com HTTPException
 
 ## Tecnologias
 
@@ -135,27 +137,62 @@ pip install -r requirements.txt
 └── order_routes.py   # Rotas de pedidos
 ```
 
+## Diferença entre parâmetros diretos vs Pydantic BaseModel
+
+### Parâmetros diretos (str, int, etc.)
+```python
+@app.post("/criar_conta")
+async def criar_conta(email: str, senha: str, nome: str):
+    ...
+```
+- FastAPI interpreta como **query parameters** ou **form-data**
+- Enviar como: `?email=exemplo@ex.com&senha=123&nome=Ana`
+- Ou como **Form URL Encoded** no Insomnia
+
+### Usando Pydantic BaseModel (Schema)
+```python
+class UsuarioSchema(BaseModel):
+    nome: str
+    email: str
+    senha: str
+
+@app.post("/criar_conta")
+async def criar_conta(usuario: UsuarioSchema):
+    ...
+```
+- FastAPI interpreta automaticamente como **JSON no body**
+- Enviar como **JSON** no Insomnia
+- Tem validação automática de tipos
+- Gera documentação automática no `/docs`
+
 **Utilizando o Insomnia**
 
 - **Endpoint:** `POST http://127.0.0.1:8000/auth/criar_conta`
-- **Observação:** a rota atual espera os parâmetros via *query string* (não JSON no corpo).
-- **Passos no Insomnia:**
-   - Crie uma nova request do tipo `POST`.
-   - Informe a URL acima.
-   - Abra a aba **Query** (Query Params) e adicione os pares:
-      - `email` = exemplo@ex.com
-      - `senha` = senha123
-      - `nome` = Ana
-   - Clique em **Send**.
-
-- **Exemplo de URL com query string:**
-
-   `http://127.0.0.1:8000/auth/criar_conta?email=exemplo@ex.com&senha=senha123&nome=Ana`
-
-- **cURL equivalente:**
-
-```bash
-curl -X POST "http://127.0.0.1:8000/auth/criar_conta?email=exemplo@ex.com&senha=senha123&nome=Ana"
+- **Tipo de Body:** Selecione **JSON** (não Form URL Encoded)
+- **Exemplo de JSON:**
+```json
+{
+  "nome": "Ana",
+  "email": "exemplo@ex.com",
+  "senha": "senha123",
+  "ativos": true,
+  "admin": false
+}
 ```
 
-Essa instrução assume que o servidor está rodando em `http://127.0.0.1:8000`.
+**Exemplo 1: Usuário cadastrado com sucesso (200 OK)**
+
+![Usuário cadastrado com sucesso](./images/usuario-sucesso.png)
+
+**Exemplo 2: Email já cadastrado (400 Bad Request)**
+
+![Email já cadastrado - Erro 400](./images/usuario-erro-400.png)
+
+- **cURL equivalente:**
+```bash
+curl -X POST "http://127.0.0.1:8000/auth/criar_conta" \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Ana","email":"exemplo@ex.com","senha":"senha123","ativos":true,"admin":false}'
+```
+
+**⚠️ Importante:** Os campos `ativos` e `admin` são opcionais (têm valores padrão).

@@ -14,6 +14,12 @@ Tipos de requisições:
 from fastapi import FastAPI
 from auth_routes import auth_router
 from order_routes import order_router
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # carrega as variáveis de ambiente do arquivo .env
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI()
 
