@@ -3,12 +3,21 @@ from models import Usuario
 from dependencies import pegar_sessao, bcrypt_context
 from schemas import UsuarioSchema, LoginSchema
 from sqlalchemy.orm import Session
+from jose import jwt, JWTError
+from datetime import datetime, timedelta, timezone
+from main import ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
+# Função para criar token JWT
+# O token JWT é um padrão aberto para criar tokens de acesso que permitem a comunicação segura entre um cliente e um servidor. Ele é composto por três partes: header, payload e signature. O header contém informações sobre o tipo de token e o algoritmo de criptografia utilizado. O payload contém as informações do usuário e as permissões de acesso. A signature é gerada a partir do header e do payload usando uma chave secreta, garantindo a integridade do token.
 def criar_token(id_usuario):
-    token = f"moefmeijfmeofmc{id_usuario}"
-    return token
+    data_expiracao = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+    # Versão 1: Usando o access_token_expires definido nas nossas variáveis de ambiente como 30 minutos
+    # Versão 2: Usando auto refresh, ou seja, o token é renovado a cada vez que o usuário faz uma requisição, mantendo a sessão ativa enquanto o usuário estiver utilizando a aplicação.
+    dict_informacoes = {"sub": id_usuario, "exp": data_expiracao}
+    jwt_codificado = jwt.encode(dict_informacoes, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt_codificado
 
 def autenticar_usuario(email, senha, session):
     usuario = session.query(Usuario).filter(Usuario.email == email).first()
