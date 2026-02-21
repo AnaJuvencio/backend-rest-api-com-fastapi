@@ -10,6 +10,16 @@ def criar_token(id_usuario):
     token = f"moefmeijfmeofmc{id_usuario}"
     return token
 
+def autenticar_usuario(email, senha, session):
+    usuario = session.query(Usuario).filter(Usuario.email == email).first()
+    if not usuario:
+        return False
+    elif not bcrypt_context.verify(senha, usuario.senha):
+        return False
+    else:
+        return usuario
+    
+    
 @auth_router.get("/")
 async def home():
     return {"mensagem": "Vc acessou a rota de autenticação", "autenticado": False}
@@ -30,7 +40,7 @@ async def criar_conta(usuario_schema: UsuarioSchema, session: Session=Depends(pe
     
 @auth_router.post("/login")
 async def login(login_schema: LoginSchema, session: Session=Depends(pegar_sessao)):
-    usuario = session.query(Usuario).filter(Usuario.email == login_schema.email).first()
+    usuario = autenticar_usuario(login_schema.email, login_schema.senha, session)
     if not usuario:
         raise HTTPException(status_code=400, detail="Email não cadastrado") # raise lança uma exceção, return devolce 200
     else:
