@@ -11,8 +11,8 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 # Função para criar token JWT
 # O token JWT é um padrão aberto para criar tokens de acesso que permitem a comunicação segura entre um cliente e um servidor. Ele é composto por três partes: header, payload e signature. O header contém informações sobre o tipo de token e o algoritmo de criptografia utilizado. O payload contém as informações do usuário e as permissões de acesso. A signature é gerada a partir do header e do payload usando uma chave secreta, garantindo a integridade do token.
-def criar_token(id_usuario):
-    data_expiracao = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+def criar_token(id_usuario, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+    data_expiracao = datetime.now(timezone.utc) + duracao_token
     # Versão 1: Usando o access_token_expires definido nas nossas variáveis de ambiente como 30 minutos
     # Versão 2: Usando auto refresh, ou seja, o token é renovado a cada vez que o usuário faz uma requisição, mantendo a sessão ativa enquanto o usuário estiver utilizando a aplicação.
     dict_informacoes = {"sub": id_usuario, "exp": data_expiracao}
@@ -54,5 +54,6 @@ async def login(login_schema: LoginSchema, session: Session=Depends(pegar_sessao
         raise HTTPException(status_code=400, detail="Email não cadastrado") # raise lança uma exceção, return devolce 200
     else:
         access_token = criar_token(usuario.id)
+        refresh_token = criar_token(usuario.id, duracao_token=timedelta(days=7)) # token de refresh com duração de 7 dias
         # JWT Bearer -> envia dentro do headers = {"Access-Token": "Bearer <token>}
-        return {"access_token": access_token, "token_type": "Bearer"}
+        return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "Bearer"}
